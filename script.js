@@ -1,3 +1,5 @@
+const audio = document.getElementById("audio");
+
 let playing = false;
 let timer = null;
 
@@ -54,6 +56,7 @@ lyricsData.forEach((line, i) => {
 
 slider.addEventListener("input", () => {
   const currentTime = parseFloat(slider.value);
+  audio.currentTime = currentTime;
   timeEl.textContent = formatTime(currentTime);
 
   lyricsData.forEach((line, i) => {
@@ -68,18 +71,21 @@ slider.addEventListener("input", () => {
     }
   });
 });
-document.getElementById("playBtn").onclick = () => {
+document.getElementById("playBtn").onclick = async () => {
   if (playing) return;
   playing = true;
 
+  await audio.play();
+
   timer = setInterval(() => {
-    slider.value = (parseFloat(slider.value) + 0.05).toFixed(2);
+    slider.value = audio.currentTime.toFixed(2);
     slider.dispatchEvent(new Event("input"));
   }, 50);
 };
 
 document.getElementById("pauseBtn").onclick = () => {
   playing = false;
+  audio.pause();
   clearInterval(timer);
 };
 function formatTime(seconds) {
